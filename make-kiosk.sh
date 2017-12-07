@@ -260,6 +260,9 @@ sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/sysconfig/selinux && cat /etc/sys
 echo "Disable Firewall"
 systemctl disable firewalld
 
+echo "Disable Plymputh due to possible errors"
+
+yum remove -y plymouth
 echo "If You got any comments or questions: marcin@marcinwilk.eu"
 echo "Remember that after reboot it should start directly in KIOSK."
 echo -e "\e[92mUse \e[93mCTRL+ALT+F2 \e[92mto go to console in KIOSK mode!!!"
