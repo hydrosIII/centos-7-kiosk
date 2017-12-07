@@ -76,7 +76,7 @@ echo -e "Version \e[91m1.4 \e[39msupporting EL/SL/CentOS version 5; 6 and 7."
 echo ""
 echo "This script will install additional software and will make changes"
 echo "in system config files to make it work in KIOSK mode after reboot"
-echo "with Opera started as web browser."
+echo "with firefox started as web browser."
 echo ""
 echo "The log file will be created in /var/log/make-kiosk.log"
 echo "Please attach this file for error reports."
@@ -131,185 +131,23 @@ echo "Installing wget."
 echo "Installing wget." >> $log
 yum -y install wget 1>> $log 2>> $log
 echo "Operation done in 10%"
-echo "Installing X Window system with GDM/Gnome/Matchbox. It will take very long!!! Be patient!!! Downloading up to 
-~300MB"
+echo "Installing X Window system with GDM/Gnome/Matchbox. It will take very long!!! Be patient!!! Downloading up to ~300MB"
 echo "Installing X Window system with GDM/Gnome/Matchbox." >> $log
 yum -y groupinstall basic-desktop x11 fonts base-x 1>> $log 2>> $log
 yum -y install gdm 1>> $log 2>> $log
-if [ -n "$el5" ]
-then
-yum -y install make gawk gcc 1>> $log 2>> $log
-yum -y install libX11-devel 1>> $log 2>> $log
-yum -y install libXext-devel 1>> $log 2>> $log
-cd /root/ 1>> $log 2>> $log
-rm -f matchbox-window-manager-1.2.tar.gz 1>> $log 2>> $log
-wget 
-http://downloads.yoctoproject.org/releases/matchbox/matchbox-window-manager/1.2/matchbox-window-manager-1.2.tar.gz 
-1>> $log 2>> $log
-tar xvf matchbox-window-manager-1.2.tar.gz 1>> $log 2>> $log
-cd matchbox-window-manager-1.2 1>> $log 2>> $log
-./configure --enable-standalone 1>> $log 2>> $log
-make 1>> $log 2>> $log
-make install 1>> $log 2>> $log
-cd .. 1>> $log 2>> $log
-else
 yum -y install matchbox-window-manager 1>> $log 2>> $log
-fi
 yum -y install rsync 1>> $log 2>> $log
+
 echo "Operation done in 60%"
 echo "Checking EL version..."
-if [ -n "$el5" ]
-then
-echo "EL 5.x detected, using older Opera version." >> $log
-echo "EL 5.x detected, using older Opera version."
-    if [ $cpu = x86_64 ]
-    then
-        echo "Downloading Opera for x86_64."
-        rm -f opera-11.64-1403.x86_64.linux.tar 1>> $log 2>> $log
-        wget http://get.geo.opera.com/pub/opera/linux/1164/opera-11.64-1403.x_86_64.linux.tar.bz2 1>> $log 2>> $log
-        bzip2 -d opera-11.64-1403.x86_64.linux.tar.bz2 1>> $log 2>> $log
-        tar xvf opera-11.64-1403.x86_64.linux.tar 1>> $log 2>> $log
-        echo "Installing Opera."
-        yum -y install cdparanoia-libs flac gstreamer gstreamer-plugins-base gstreamer-plugins-good gstreamer-tools 
-libavc1394 libdv libiec61883 liboil libraw1394 libtheora speex 1>> $log 2>> $log
-        opera-11.64-1403.x86_64.linux/install --unattended --system 1>> $log 2>> $log
-        rm -rf opera-11.64-1403.x86_64.linux 1>> $log 2>> $log
-        if [ $flash = yes ]
-        then
-    	    echo "Installing Flash." >> $log
-    	    rpm -ivh http://linuxdownload.adobe.com/adobe-release/adobe-release-x86_64-1.0-1.noarch.rpm 1>> $log 
-2>> $log
-    	    rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-adobe-linux 1>> $log 2>> $log
-    	    yum -y check-update 1>> $log 2>> $log
-    	    yum -y groupinstall sound-and-video 1>> $log 2>> $log
-    	    yum -y install flash-plugin nspluginwrapper curl 1>> $log 2>> $log
-    	else
-    	    echo "Skipping flash install." >> $log
-    	fi
-    elif [ $cpu = i386 ]
-    then
-        echo "Downloading Opera for i386."
-        rm -f opera-11.64-1403.i386.linux.tar 1>> $log 2>> $log
-        wget http://get.geo.opera.com/pub/opera/linux/1164/opera-11.64-1403.i386.linux.tar.bz2 1>> $log 2>> $log
-        bzip2 -d opera-11.64-1403.i386.linux.tar.bz2 1>> $log 2>> $log
-        tar xvf opera-11.64-1403.i386.linux.tar 1>> $log 2>> $log
-        echo "Installing Opera."
-        yum -y install cdparanoia-libs flac gstreamer gstreamer-plugins-base gstreamer-plugins-good gstreamer-tools 
-libavc1394 libdv libiec61883 liboil libraw1394 libtheora speex 1>> $log 2>> $log
-        opera-11.64-1403.i386.linux/install --unattended --system 1>> $log 2>> $log
-        rm -rf opera-11.64-1403.i386.linux 1>> $log 2>> $log
-        if [ $flash = yes ]
-        then
-    	    echo "Installing Flash." >> $log
-    	    rpm -ivh http://linuxdownload.adobe.com/adobe-release/adobe-release-i386-1.0-1.noarch.rpm 1>> $log 2>> 
-$log
-    	    rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-adobe-linux 1>> $log 2>> $log
-    	    yum -y check-update 1>> $log 2>> $log
-    	    yum -y groupinstall sound-and-video 1>> $log 2>> $log
-    	    yum -y install flash-plugin nspluginwrapper curl 1>> $log 2>> $log
-    	else
-    	    echo "Skipping flash install." >> $log
-    	fi
-    else
-        echo "No supported kernel architecture detected for Opera install. Mission aborted!"
-        echo "Aborting Opera and Flash install, no x86_64 or i386!" >> $log
-    fi
-else
-echo "EL 6/7 detected, using new Opera version." >> $log
-echo "EL 6/7 detected, using new Opera version."
+echo "Installing Firefox"
+yum install firefox
 echo "Adding Xinit Session support." >> $log
 echo "Adding Xinit Session support."
 yum -y install gnome-session-xsession 1>> $log 2>> $log
 yum -y install xorg-x11-xinit-session 1>> $log 2>> $log
-    if [ -n "$el6" ]
-    then
-    echo "EL 6.x detected, using correct Opera version." >> $log
-        if [ $cpu = x86_64 ]
-        then
-	    echo "Downloading Opera for x86_64."
-    	    rm -f opera-12.16-1860.x86_64.rpm 1>> $log 2>> $log
-    	    wget http://get.geo.opera.com/pub/opera/linux/1216/opera-12.16-1860.x86_64.rpm 1>> $log 2>> $log
-	    echo "Installing Opera."
-            yum -y localinstall opera-12.16*.rpm 1>> $log 2>> $log
-        if [ $flash = yes ]
-        then
-    	    echo "Installing Flash." >> $log
-    	    rpm -ivh http://linuxdownload.adobe.com/adobe-release/adobe-release-x86_64-1.0-1.noarch.rpm 1>> $log 
-2>> $log
-    	    rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-adobe-linux 1>> $log 2>> $log
-    	    yum -y check-update 1>> $log 2>> $log
-    	    yum -y install flash-plugin nspluginwrapper alsa-plugins-pulseaudio libcurl 1>> $log 2>> $log
-    	else
-    	    echo "Skipping flash install." >> $log
-    	fi
-	elif [ $cpu = i386 ]
-	then
-    	    echo "Downloading Opera for i386."
-    	    rm -f opera-12.16-1860.i386.rpm 1>> $log 2>> $log
-    	    wget http://get.geo.opera.com/pub/opera/linux/1216/opera-12.16-1860.i386.rpm 1>> $log 2>> $log
-    	    echo "Installing Opera."
-    	    yum -y localinstall opera-12.16*.rpm 1>> $log 2>> $log
-        if [ $flash = yes ]
-        then
-    	    echo "Installing Flash." >> $log
-    	    rpm -ivh http://linuxdownload.adobe.com/adobe-release/adobe-release-i386-1.0-1.noarch.rpm 1>> $log 2>> 
-$log
-    	    rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-adobe-linux 1>> $log 2>> $log
-    	    yum -y check-update 1>> $log 2>> $log
-    	    yum -y install flash-plugin nspluginwrapper alsa-plugins-pulseaudio libcurl 1>> $log 2>> $log
-    	else
-    	    echo "Skipping flash install." >> $log
-    	fi
-	else
-    	    echo "No supported kernel architecture detected for Opera install. Mission aborted!"
-    	    echo "Aborting Opera install, no x86_64 or i386!" >> $log
-	fi
-    fi
-    if [ -n "$el7" ]
-    then
-    echo "EL 7.x detected, using correct Opera version." >> $log
-        if [ $cpu = x86_64 ]
-        then
-            echo "Downloading Opera for x86_64."
-            rm -f opera-12.16-1860.x86_64.rpm 1>> $log 2>> $log
-            wget http://get.geo.opera.com/pub/opera/linux/1216/opera-12.16-1860.x86_64.rpm 1>> $log 2>> $log
-            echo "Installing Opera."
-            yum -y localinstall opera-12.16*.rpm 1>> $log 2>> $log
-        if [ $flash = yes ]
-        then
-    	    echo "Installing Flash." >> $log
-    	    rpm -ivh http://linuxdownload.adobe.com/adobe-release/adobe-release-x86_64-1.0-1.noarch.rpm 1>> $log 
-2>> $log
-    	    rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-adobe-linux 1>> $log 2>> $log
-    	    yum -y check-update 1>> $log 2>> $log
-    	    yum -y install flash-plugin nspluginwrapper alsa-plugins-pulseaudio libcurl 1>> $log 2>> $log
-        else
-    	    echo "Skipping flash install." >> $log
-        fi
-        elif [ $cpu = i386 ]
-        then
-    	    echo "Downloading Opera for i386."
-    	    rm -f opera-12.16-1860.i386.rpm 1>> $log 2>> $log
-    	    wget http://get.geo.opera.com/pub/opera/linux/1216/opera-12.16-1860.i386.rpm 1>> $log 2>> $log
-    	    echo "Installing Opera."
-    	    yum -y localinstall opera-12.16*.rpm 1>> $log 2>> $log
-        if [ $flash = yes ]
-        then
-            echo "Installing Flash." >> $log
-            rpm -ivh http://linuxdownload.adobe.com/adobe-release/adobe-release-i386-1.0-1.noarch.rpm 1>> $log 2>> 
-$log
-            rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-adobe-linux 1>> $log 2>> $log
-            yum -y check-update 1>> $log 2>> $log
-            yum -y install flash-plugin nspluginwrapper alsa-plugins-pulseaudio libcurl 1>> $log 2>> $log
-        else
-            echo "Skipping flash install." >> $log
-            fi
-        else
-            echo "No supported kernel architecture detected for Opera install. Mission aborted!"
-            echo "Aborting Opera install, no x86_64 or i386!" >> $log
-        fi
-    fi
-fi
+
+
 echo "Operation done in 85%"
 echo "Configuring login manager (GDM), adding lines for autologin kiosk user."
 autologin=$( cat /etc/gdm/custom.conf | grep AutomaticLoginEnable=true )
@@ -376,49 +214,21 @@ else
         sed -i 's/id:4:initdefault:/id:5:initdefault:/g' /etc/inittab 1>> $log 2>> $log
     fi
 fi
+
 echo "Operation done in 93%"
 echo "Disabling firstboot."
 echo "Disabling firstboot." >> $log
 echo "RUN_FIRSTBOOT=NO" > /etc/sysconfig/firstboot
 echo "Operation done in 94%"
-if [ -n "$el5" ]
-then
-echo "Skipping .dmrc creation in current distribution version."
-echo "Generating Opera 11 browser startup config file."
-echo "Generating Opera 11 browser startup config file." >> $log
+echo "Generating Firefox browser startup config file."
+echo "Generating firefox 12 browser startup config file." >> $log
 echo "xset s off" > /home/kiosk/.xsession
 echo "xset -dpms" >> /home/kiosk/.xsession
 echo "matchbox-window-manager &" >> /home/kiosk/.xsession
 echo "while true; do" >> /home/kiosk/.xsession
 echo "rsync -qr --delete --exclude='.Xauthority' /opt/kiosk/ /home/kiosk/" >> /home/kiosk/.xsession
-echo "opera -nomail -noprint -noexit -nochangebuttons -nosave -nodownload -nomaillinks -nomenu -nominmaxbuttons 
--nocontextmenu -resetonexit -nosession $mainsite" >> /home/kiosk/.xsession
+echo "firefox &" >> /home/kiosk/.xsession
 echo "done" >> /home/kiosk/.xsession
-mkdir /home/kiosk/.opera
-touch /home/kiosk/.opera/operaprefs.ini
-echo "[State]" > /home/kiosk/.opera/operaprefs.ini
-echo "Accept License=1" >> /home/kiosk/.opera/operaprefs.ini
-chown kiosk:kiosk /home/kiosk/.opera 1>> $log 2>> $log
-chown kiosk:kiosk /home/kiosk/.opera/operaprefs.ini 1>> $log 2>> $log
-chmod +x /home/kiosk/.xsession 1>> $log 2>> $log
-chown kiosk:kiosk /home/kiosk/.xsession 1>> $log 2>> $log
-else
-echo "Generating Opera 12 browser startup config file."
-echo "Generating Opera 12 browser startup config file." >> $log
-echo "xset s off" > /home/kiosk/.xsession
-echo "xset -dpms" >> /home/kiosk/.xsession
-echo "matchbox-window-manager &" >> /home/kiosk/.xsession
-echo "while true; do" >> /home/kiosk/.xsession
-echo "rsync -qr --delete --exclude='.Xauthority' /opt/kiosk/ /home/kiosk/" >> /home/kiosk/.xsession
-echo "opera -k -nomail -noprint -noexit -nochangebuttons -nosave -nodownload -nomaillinks -nomenu -nominmaxbuttons 
--nocontextmenu -resetonexit -nosession $mainsite" >> /home/kiosk/.xsession
-echo "done" >> /home/kiosk/.xsession
-mkdir /home/kiosk/.opera
-touch /home/kiosk/.opera/operaprefs.ini
-echo "[State]" >> /home/kiosk/.opera/operaprefs.ini
-echo "Accept License=1" >> /home/kiosk/.opera/operaprefs.ini
-chown kiosk:kiosk /home/kiosk/.opera 1>> $log 2>> $log
-chown kiosk:kiosk /home/kiosk/.opera/operaprefs.ini 1>> $log 2>> $log
 chmod +x /home/kiosk/.xsession 1>> $log 2>> $log
 ln -s /home/kiosk/.xsession /home/kiosk/.xinitrc
 chown kiosk:kiosk /home/kiosk/.xsession 1>> $log 2>> $log
@@ -428,7 +238,6 @@ echo "[Desktop]" > /home/kiosk/.dmrc
 echo "Session=xinit-compat" >> /home/kiosk/.dmrc
 echo "Language=$LANG" >> /home/kiosk/.dmrc
 chown kiosk:kiosk /home/kiosk/.dmrc 1>> $log 2>> $log
-fi
 echo "Operation done in 96%"
 echo "Copying files for reseting every user restart." >> $log
 echo "Copying files for reseting every user restart."
@@ -437,7 +246,8 @@ chmod 755 /opt/kiosk
 chown kiosk:kiosk -R /opt/kiosk
 echo "Operation done in 100%"
 echo "Mission completed!"
-echo ""
+echo "Installing printer drivers"
+
 echo "If You got any comments or questions: marcin@marcinwilk.eu"
 echo "Remember that after reboot it should start directly in KIOSK."
 echo -e "\e[92mUse \e[93mCTRL+ALT+F2 \e[92mto go to console in KIOSK mode!!!"
