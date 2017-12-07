@@ -247,6 +247,11 @@ chown kiosk:kiosk -R /opt/kiosk
 echo "Operation done in 100%"
 echo "Mission completed!"
 echo "Installing printer drivers"
+yum install wget 
+wget https://github.com/hydrosIII/centos-7-kiosk/raw/master/tmx-cups-2.0.3.0.tar.gz
+tar -xvf tmx-cups-2.0.3.0.tar.gz
+cd tmx-cups
+./install.sh
 
 echo "If You got any comments or questions: marcin@marcinwilk.eu"
 echo "Remember that after reboot it should start directly in KIOSK."
