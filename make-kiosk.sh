@@ -247,6 +247,9 @@ echo "Installing printer drivers"
 yum install -y wget 
 wget https://github.com/hydrosIII/centos-7-kiosk/raw/master/tmx-cups-2.0.3.0.tar.gz
 tar -xvf tmx-cups-2.0.3.0.tar.gz
+echo "Installing dependencies for printer"
+yum -y install xz-libs bzip2 zlib libattr libcap elfutils-libelf elfutils-libs libdwarf libcap libudev libusb usbutils gvfs 
+## Epson for some reasons needs gvfs
 yum install -y cups cups-client redhat-lsb-printing
 systemctl enable cups
 cd tmx-cups
@@ -257,6 +260,8 @@ sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/sysconfig/selinux && cat /etc/sys
 sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config && cat /etc/selinux/config
 echo "Disable Firewall for not headache"
 systemctl disable firewalld
+
+
 
 echo "Operation done in 100%"
 echo "Mission completed!"
