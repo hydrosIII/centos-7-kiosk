@@ -76,7 +76,7 @@ echo -e "Version \e[91m1.4 \e[39msupporting EL/SL/CentOS version 5; 6 and 7."
 echo ""
 echo "This script will install additional software and will make changes"
 echo "in system config files to make it work in KIOSK mode after reboot"
-echo "with firefox started as web browser."
+echo "with started as web browser."
 echo ""
 echo "The log file will be created in /var/log/make-kiosk.log"
 echo "Please attach this file for error reports."
@@ -215,19 +215,16 @@ else
     fi
 fi
 
-echo "Operation done in 93%"
-echo "Disabling firstboot."
-echo "Disabling firstboot." >> $log
-echo "RUN_FIRSTBOOT=NO" > /etc/sysconfig/firstboot
+
 echo "Operation done in 94%"
 echo "Generating Firefox browser startup config file."
-echo "Generating firefox 12 browser startup config file." >> $log
+echo "Generating firefox browser startup config file." >> $log
 echo "xset s off" > /home/kiosk/.xsession
 echo "xset -dpms" >> /home/kiosk/.xsession
 echo "matchbox-window-manager &" >> /home/kiosk/.xsession
 echo "while true; do" >> /home/kiosk/.xsession
 echo "rsync -qr --delete --exclude='.Xauthority' /opt/kiosk/ /home/kiosk/" >> /home/kiosk/.xsession
-echo "firefox &" >> /home/kiosk/.xsession
+echo "firefox" >> /home/kiosk/.xsession
 echo "done" >> /home/kiosk/.xsession
 chmod +x /home/kiosk/.xsession 1>> $log 2>> $log
 ln -s /home/kiosk/.xsession /home/kiosk/.xinitrc
@@ -244,25 +241,26 @@ echo "Copying files for reseting every user restart."
 cp -r /home/kiosk /opt/
 chmod 755 /opt/kiosk
 chown kiosk:kiosk -R /opt/kiosk
-echo "Operation done in 100%"
-echo "Mission completed!"
-echo "Installing printer drivers"
 
+
+echo "Installing printer drivers"
 yum install -y wget 
 wget https://github.com/hydrosIII/centos-7-kiosk/raw/master/tmx-cups-2.0.3.0.tar.gz
 tar -xvf tmx-cups-2.0.3.0.tar.gz
-yum install -y cups cups-client
+yum install -y cups cups-client redhat-lsb-printing
+systemctl enable cups
 cd tmx-cups
 ./install.sh
 
-echo "Disable SELINUX"
+echo "Disable SELINUX for easy use"
 sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/sysconfig/selinux && cat /etc/sysconfig/selinux 
-echo "Disable Firewall"
+sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config && cat /etc/selinux/config
+echo "Disable Firewall for not headache"
 systemctl disable firewalld
 
-echo "Disable Plymputh due to possible errors"
+echo "Operation done in 100%"
+echo "Mission completed!"
 
-yum remove -y plymouth
 echo "If You got any comments or questions: marcin@marcinwilk.eu"
 echo "Remember that after reboot it should start directly in KIOSK."
 echo -e "\e[92mUse \e[93mCTRL+ALT+F2 \e[92mto go to console in KIOSK mode!!!"
