@@ -141,7 +141,7 @@ yum -y install rsync 1>> $log 2>> $log
 echo "Operation done in 60%"
 echo "Checking EL version..."
 echo "Installing Firefox"
-yum install firefox
+yum install -y firefox
 echo "Adding Xinit Session support." >> $log
 echo "Adding Xinit Session support."
 yum -y install gnome-session-xsession 1>> $log 2>> $log
@@ -248,10 +248,10 @@ echo "Operation done in 100%"
 echo "Mission completed!"
 echo "Installing printer drivers"
 
-yum install wget 
+yum install -y wget 
 wget https://github.com/hydrosIII/centos-7-kiosk/raw/master/tmx-cups-2.0.3.0.tar.gz
 tar -xvf tmx-cups-2.0.3.0.tar.gz
-yum install cups cups-client
+yum install -y cups cups-client
 cd tmx-cups
 ./install.sh
 
