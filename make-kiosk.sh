@@ -261,6 +261,12 @@ yum -y install uld
 
 systemctl enable cups
 
+cd /opt/kiosk
+wget https://github.com/hydrosIII/centos-7-kiosk/blob/master/mozilla.tar?raw=true
+tar -xvf mozilla.tar
+rm mozilla.tar
+
+
 echo "Disable SELINUX for easy use"
 sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/sysconfig/selinux && cat /etc/sysconfig/selinux 
 sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config && cat /etc/selinux/config
