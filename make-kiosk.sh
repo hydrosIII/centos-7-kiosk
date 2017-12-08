@@ -223,7 +223,7 @@ echo "xset s off" > /home/kiosk/.xsession
 echo "xset -dpms" >> /home/kiosk/.xsession
 echo "matchbox-window-manager &" >> /home/kiosk/.xsession
 echo "while true; do" >> /home/kiosk/.xsession
-echo "rsync -qr --delete --exclude='.Xauthority' /opt/kiosk/ /home/kiosk/" >> /home/kiosk/.xsession
+echo "rsync -qr --delete --exclude='.Xauthority .mozilla' /opt/kiosk/ /home/kiosk/" >> /home/kiosk/.xsession
 echo "firefox" >> /home/kiosk/.xsession
 echo "done" >> /home/kiosk/.xsession
 chmod +x /home/kiosk/.xsession 1>> $log 2>> $log
@@ -251,9 +251,15 @@ echo "Installing dependencies for printer"
 yum -y install xz-libs bzip2 zlib libattr libcap elfutils-libelf elfutils-libs libdwarf libcap libudev libusb usbutils gvfs 
 ## Epson for some reasons needs gvfs
 yum install -y cups cups-client redhat-lsb-printing
-systemctl enable cups
 cd tmx-cups
 ./install.sh
+
+echo "Installing Samsung Printer Drivers"
+yum-config-manager --add-repo=https://negativo17.org/repos/epel-uld.repo
+yum -y install uld
+
+
+systemctl enable cups
 
 echo "Disable SELINUX for easy use"
 sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/sysconfig/selinux && cat /etc/sysconfig/selinux 
