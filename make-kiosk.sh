@@ -124,9 +124,10 @@ else
 fi
 
 echo "Operation done in 5%"
-echo "Adding user kiosk."
-echo "Adding user kiosk." >> $log
-useradd kiosk 1>> $log 2>> $log
+echo "Adding user farmacia."
+echo "Adding user farmacia." >> $log
+useradd farmacia 1>> $log 2>> $log
+echo farmacia:farmacia | chpasswd >> $log
 echo "Installing wget."
 echo "Installing wget." >> $log
 yum -y install wget 1>> $log 2>> $log
@@ -149,9 +150,9 @@ yum -y install xorg-x11-xinit-session 1>> $log 2>> $log
 
 
 echo "Operation done in 85%"
-echo "Configuring login manager (GDM), adding lines for autologin kiosk user."
+echo "Configuring login manager (GDM), adding lines for autologin farmacia user."
 autologin=$( cat /etc/gdm/custom.conf | grep AutomaticLoginEnable=true )
-loginname=$( cat /etc/gdm/custom.conf | grep AutomaticLogin=kiosk )
+loginname=$( cat /etc/gdm/custom.conf | grep AutomaticLogin=farmacia )
 if [ -n "$autologin" ]
 then
     echo "File is already configured for automatic login."
@@ -168,25 +169,25 @@ else
 fi
 if [ -n "$loginname" ]
 then
-    echo "File is already configured for user kiosk to autologin."
-    echo "Aborting adding AutomaticLogin=kiosk!" >> $log
+    echo "File is already configured for user farmacia to autologin."
+    echo "Aborting adding AutomaticLogin=farmacia!" >> $log
     grep AutomaticLogin /etc/gdm/custom.conf 1>> $log 2>> $log
 else
     echo "Adding line to /etc/gdm/custom.conf for login user name."
     echo "Adding line to /etc/gdm/custom.conf for login user name." >> $log
-    sed -i '/AutomaticLoginEnable=true/aAutomaticLogin=kiosk' /etc/gdm/custom.conf 1>> $log 2>> $log
+    sed -i '/AutomaticLoginEnable=true/aAutomaticLogin=farmacia' /etc/gdm/custom.conf 1>> $log 2>> $log
 fi
 if [ -n "$el7" ]
 then
     echo "Adding line to /etc/gdm/custom.conf for default X Session in EL7." >> $log
-    echo "And creating session file for specific user in /var/lib/AccountsService/users/kiosk." >> $log
-    sed -i '/AutomaticLogin=kiosk/aDefaultSession=xinit-compat.desktop' /etc/gdm/custom.conf 1>> $log 2>> $log
-    touch /var/lib/AccountsService/users/kiosk
-    chmod 644 /var/lib/AccountsService/users/kiosk
-    echo "[User]" >> /var/lib/AccountsService/users/kiosk
-    echo "Language=" >> /var/lib/AccountsService/users/kiosk
-    echo "XSession=xinit-compat" >> /var/lib/AccountsService/users/kiosk
-    echo "SystemAccount=false" >> /var/lib/AccountsService/users/kiosk
+    echo "And creating session file for specific user in /var/lib/AccountsService/users/farmacia." >> $log
+    sed -i '/AutomaticLogin=farmacia/aDefaultSession=xinit-compat.desktop' /etc/gdm/custom.conf 1>> $log 2>> $log
+    touch /var/lib/AccountsService/users/farmacia
+    chmod 644 /var/lib/AccountsService/users/farmacia
+    echo "[User]" >> /var/lib/AccountsService/users/farmacia
+    echo "Language=" >> /var/lib/AccountsService/users/farmacia
+    echo "XSession=xinit-compat" >> /var/lib/AccountsService/users/farmacia
+    echo "SystemAccount=false" >> /var/lib/AccountsService/users/farmacia
 else
     echo "No need for default session in gdm.conf." >> $log
 fi
@@ -219,28 +220,28 @@ fi
 echo "Operation done in 94%"
 echo "Generating Firefox browser startup config file."
 echo "Generating firefox browser startup config file." >> $log
-echo "xset s off" > /home/kiosk/.xsession
-echo "xset -dpms" >> /home/kiosk/.xsession
-echo "matchbox-window-manager &" >> /home/kiosk/.xsession
-echo "while true; do" >> /home/kiosk/.xsession
-echo "rsync -qr --delete --exclude='.Xauthority .mozilla' /opt/kiosk/ /home/kiosk/" >> /home/kiosk/.xsession
-echo "firefox" >> /home/kiosk/.xsession
-echo "done" >> /home/kiosk/.xsession
-chmod +x /home/kiosk/.xsession 1>> $log 2>> $log
-ln -s /home/kiosk/.xsession /home/kiosk/.xinitrc
-chown kiosk:kiosk /home/kiosk/.xsession 1>> $log 2>> $log
+echo "xset s off" > /home/farmacia/.xsession
+echo "xset -dpms" >> /home/farmacia/.xsession
+echo "matchbox-window-manager &" >> /home/farmacia/.xsession
+echo "while true; do" >> /home/farmacia/.xsession
+echo "rsync -qr --delete --exclude='.Xauthority .mozilla' /opt/farmacia/ /home/farmacia/" >> /home/farmacia/.xsession
+echo "firefox" >> /home/farmacia/.xsession
+echo "done" >> /home/farmacia/.xsession
+chmod +x /home/farmacia/.xsession 1>> $log 2>> $log
+cp /home/farmacia/.xsession /home/farmacia/.xinitrc
+chown farmacia:farmacia /home/farmacia/.xsession 1>> $log 2>> $log
 echo "Creating desktop profile session file."
 echo "Creating .dmrc desktop profile session file." >> $log
-echo "[Desktop]" > /home/kiosk/.dmrc
-echo "Session=xinit-compat" >> /home/kiosk/.dmrc
-echo "Language=$LANG" >> /home/kiosk/.dmrc
-chown kiosk:kiosk /home/kiosk/.dmrc 1>> $log 2>> $log
+echo "[Desktop]" > /home/farmacia/.dmrc
+echo "Session=xinit-compat" >> /home/farmacia/.dmrc
+echo "Language=$LANG" >> /home/farmacia/.dmrc
+chown farmacia:farmacia /home/farmacia/.dmrc 1>> $log 2>> $log
 echo "Operation done in 96%"
 echo "Copying files for reseting every user restart." >> $log
 echo "Copying files for reseting every user restart."
-cp -r /home/kiosk /opt/
-chmod 755 /opt/kiosk
-chown kiosk:kiosk -R /opt/kiosk
+cp -r /home/farmacia /opt/
+chmod 755 /opt/farmacia
+chown farmacia:farmacia -R /opt/farmacia
 
 
 echo "Installing printer drivers"
@@ -261,7 +262,7 @@ yum -y install uld
 
 systemctl enable cups
 
-cd /opt/kiosk
+cd /opt/farmacia
 wget https://github.com/hydrosIII/centos-7-kiosk/blob/master/mozilla.tar?raw=true
 tar -xvf mozilla.tar
 rm mozilla.tar
